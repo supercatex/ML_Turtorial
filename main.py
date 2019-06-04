@@ -15,8 +15,9 @@ import os
 import numpy as np
 
 
-model_filename = "model"
+# Dataset: https://www.kaggle.com/scolianni/mnistasjpg
 
+model_filename = "model"
 model, labels = load_model(model_filename)
 
 if model is None:
