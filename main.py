@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation and contributors. All rights reserved.
 # Licensed under the MIT license. See LICENSE file in the project root for details.
 #
+
 from Step_1_import_data import import_data
 from Step_2_normalize_data import normalize_data
 from Step_3_create_model import create_model
@@ -24,8 +25,9 @@ if model is None:
 
     X, y = normalize_data(X, y)
     print(X.shape, y.shape)
+    print(X.shape[1:])
 
-    model = create_model()
+    model = create_model(X.shape[1:], len(labels))
     model.summary()
 
     model, history = training(X, y, model)
