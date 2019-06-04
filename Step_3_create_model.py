@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation and contributors. All rights reserved.
 # Licensed under the MIT license. See LICENSE file in the project root for details.
 #
+
 from keras.models import Model
 from keras.layers import Input, Conv2D, Dense, MaxPooling2D, Dropout, Flatten
 
