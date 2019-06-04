@@ -29,7 +29,12 @@ def import_data(data_directory):
         image_names = os.listdir(dir_images)
 
         # Create a new progress bar.
-        progress_bar = ProgressBar(total=len(image_names), prefix="Label(%s):" % label, suffix="%d/%d" % (i+1, len(labels)))
+        progress_bar = ProgressBar(
+            total=len(image_names),
+            prefix="Label(%s):" % label,
+            suffix="%d/%d" % (i+1, len(labels)),
+            length=50
+        )
 
         # Search all image in each folder.
         for j, image_name in enumerate(image_names):

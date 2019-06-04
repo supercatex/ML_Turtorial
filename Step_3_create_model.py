@@ -53,10 +53,9 @@ def create_model():
         metrics=["accuracy"]
     )
 
-    model.summary()
-
     return model
 
 
 if __name__ == "__main__":
-    create_model()
+    model = create_model()
+    model.summary()
