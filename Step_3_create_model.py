@@ -7,9 +7,9 @@ from keras.models import Model
 from keras.layers import Input, Conv2D, Dense, MaxPooling2D, Dropout, Flatten
 
 
-def create_model():
+def create_model(input_shape, num_of_classes):
     inputs = Input(
-        shape=(28, 28, 1)
+        shape=input_shape
     )
 
     x = Conv2D(
@@ -42,7 +42,7 @@ def create_model():
     x = Dropout(rate=0.5)(x)
 
     predictions = Dense(
-        units=10,
+        units=num_of_classes,
         activation="softmax"
     )(x)
 
@@ -58,5 +58,5 @@ def create_model():
 
 
 if __name__ == "__main__":
-    model = create_model()
+    model = create_model((28, 28, 1), 10)
     model.summary()
