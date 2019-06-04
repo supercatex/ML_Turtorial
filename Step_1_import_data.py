@@ -1,3 +1,7 @@
+#
+# Copyright (c) Microsoft Corporation and contributors. All rights reserved.
+# Licensed under the MIT license. See LICENSE file in the project root for details.
+#
 import os
 import matplotlib.pyplot as plt
 import matplotlib.image as Image
@@ -36,7 +40,7 @@ def import_data(data_directory):
 
             # Add into X, y.
             X.append(image)
-            y.append(label)
+            y.append(i)
 
             # Update progress bar.
             progress_bar.print_progress_bar(j + 1)
@@ -50,11 +54,11 @@ def import_data(data_directory):
     X = np.array(X)
     y = np.array(y)
 
-    return X, y
+    return X, y, labels
 
 
 if __name__ == "__main__":
-    X, y = import_data("./data/mnistasjpg/trainingSet")
+    X, y, labels = import_data("./data/mnistasjpg/trainingSet")
 
     # Display some samples.
     rows = 3
@@ -63,6 +67,6 @@ if __name__ == "__main__":
     for i in range(rows * cols):
         r = random.randint(0, len(X))
         ax = fig.add_subplot(rows, cols, i + 1)
-        ax.set_title("Label: " + y[r])
+        ax.set_title("Label index: " + y[r])
         plt.imshow(X[r], cmap=plt.cm.gray)
     plt.show()
