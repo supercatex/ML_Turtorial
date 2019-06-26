@@ -73,6 +73,6 @@ if __name__ == "__main__":
     for i in range(rows * cols):
         r = random.randint(0, len(X))
         ax = fig.add_subplot(rows, cols, i + 1)
-        ax.set_title("Label index: " + y[r])
+        ax.set_title("Label index: " + str(y[r]))
         plt.imshow(X[r], cmap=plt.cm.gray)
     plt.show()
