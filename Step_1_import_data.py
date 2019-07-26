@@ -9,6 +9,7 @@ import matplotlib.image as Image
 import numpy as np
 import random
 from console_progressbar import ProgressBar
+import cv2
 
 
 def import_data(data_directory):
@@ -43,6 +44,7 @@ def import_data(data_directory):
             # Read image from file.
             filename = dir_images + os.sep + image_name
             image = Image.imread(filename)
+            image = cv2.resize(image, (100, 100))
 
             # Add into X, y.
             X.append(image)
@@ -66,6 +68,8 @@ def import_data(data_directory):
 if __name__ == "__main__":
     X, y, labels = import_data("./data/mnistasjpg/trainingSet")
 
+    print(X.shape)
+
     # Display some samples.
     rows = 3
     cols = 5
@@ -73,6 +77,6 @@ if __name__ == "__main__":
     for i in range(rows * cols):
         r = random.randint(0, len(X))
         ax = fig.add_subplot(rows, cols, i + 1)
-        ax.set_title("Label index: " + y[r])
+        ax.set_title("Label index: " + str(y[r]))
         plt.imshow(X[r], cmap=plt.cm.gray)
     plt.show()
