@@ -12,6 +12,7 @@ from Step_6_load_model import load_model
 from Step_7_predict import predict
 import matplotlib.pyplot as plt
 import os
+import cv2
 import numpy as np
 
 
@@ -19,9 +20,10 @@ import numpy as np
 
 model_filename = "model"
 model, labels = load_model(model_filename)
+size = (50, 50)
 
 if model is None:
-    X, y, labels = import_data("./data/mnistasjpg/trainingSet")
+    X, y, labels = import_data("./dataset/output/", size)
     print(X.shape, y.shape, labels)
 
     X, y = normalize_data(X, y)
@@ -33,6 +35,8 @@ if model is None:
 
     model, history = training(X, y, model)
 
+    save_model(model, labels, model_filename)
+
     # summarize history for accuracy
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
@@ -42,28 +46,41 @@ if model is None:
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-    save_model(model, labels, model_filename)
 
+f = open("./Macau2019/training.csv", "r")
+line = f.readline()
+print(line)
 
-import matplotlib.pyplot as plt
-import matplotlib.image as Image
+n = 0
+t = 0
+while True:
+    line = f.readline()
+    if len(line) == 0:
+        break
 
-dir_test = "./data/mnistasjpg/testSet"
-image_names = os.listdir(dir_test)
+    data = line.split(",")
 
-rows = 3
-cols = 5
-count = rows * cols
-for i, name in enumerate(image_names):
-    if i % count == 0:
-        fig = plt.figure("Samples", figsize=(10, 7))
+    img = cv2.imread("./Macau2019/img/" + data[0], cv2.IMREAD_UNCHANGED)
 
-    img = Image.imread(dir_test + os.sep + name)
-    X = normalize_data(np.array([img]))
-    y = predict(X, model)
-    ax = fig.add_subplot(rows, cols, i % count + 1)
-    ax.set_title("Label index: " + str(np.argmax(y)))
-    plt.imshow(img, cmap=plt.cm.gray)
+    x1 = int(data[3])
+    y1 = int(data[4])
+    x2 = int(data[5])
+    y2 = int(data[6])
+    sign = img[y1:y2, x1:x2]
+    cv2.imshow("sign", sign)
+    sign = cv2.cvtColor(sign, cv2.COLOR_BGR2RGB)
 
-    if i % count == count - 1:
-        plt.show()
+    input = cv2.resize(sign, size)
+    input = normalize_data(np.array([input]))
+
+    py = np.argmax(predict(input, model)[0]) + 1
+    ty = int(data[7])
+    print(py, ty)
+
+    if py == ty:
+        t += 1
+    n += 1
+
+    cv2.waitKey(1)
+
+print(t, n, t / n)

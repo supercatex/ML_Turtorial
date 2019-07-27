@@ -5,7 +5,8 @@ import numpy as np
 
 _INPUT_DIR = "./images/"
 _OUTPUT_DIR = "./output/"
-_NUM_OF_SAMPLES = 1000
+_TEST_DIR = "./test/"
+_NUM_OF_SAMPLES = 3000
 _SAMPLE_SIZE = (100, 100)
 
 
@@ -25,11 +26,11 @@ def add_noise(img):
     tmp = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     dst[:, :, 0:3] = tmp
 
-    for _ in range(int(h * w * 0.1)):
-        y = np.random.randint(0, h)
-        x = np.random.randint(0, w)
-        dst[y, x] = np.random.randint(0, 255, 4)
-        dst[y, x, 3] = 255
+    # for _ in range(int(h * w * 0.1)):
+    #     y = np.random.randint(0, h)
+    #     x = np.random.randint(0, w)
+    #     dst[y, x] = np.random.randint(0, 255, 4)
+    #     dst[y, x, 3] = 255
     return dst
 
 
@@ -50,8 +51,16 @@ def generate_image(img):
     dst = cv2.warpPerspective(img, m, (w, h))
     tmp = dst.copy()
 
-    r = np.random.randint(0, 255, (h, w, c), dtype=np.uint8)
-    r[:, :, c - 1] = 255
+    bg_list = os.listdir("./bg/")
+    bg_filename = np.random.choice(bg_list, 1)[0]
+    bg = cv2.imread(os.path.join("./bg", bg_filename), cv2.IMREAD_UNCHANGED)
+    rh = np.random.randint(0, bg.shape[0] - h)
+    rw = np.random.randint(0, bg.shape[1] - w)
+    bg = bg[rh:rh+h, rw:rw+w, :]
+
+    # r = np.random.randint(0, 255, (h, w, c), dtype=np.uint8)
+    # r[:, :, c - 1] = 255
+    r = bg
     for i in range(c - 1):
         tmp[:, :, i] = cv2.bitwise_and(r[:, :, i], 255 - dst[:, :, c - 1])
         dst[:, :, i] = cv2.bitwise_and(dst[:, :, i], dst[:, :, c - 1])
@@ -61,10 +70,15 @@ def generate_image(img):
 
 
 def run():
-    global _INPUT_DIR, _OUTPUT_DIR, _NUM_OF_SAMPLES, _SAMPLE_SIZE
+    global _INPUT_DIR, _OUTPUT_DIR, _TEST_DIR, _NUM_OF_SAMPLES, _SAMPLE_SIZE
 
+    if not os.path.exists(_TEST_DIR):
+        os.makedirs(_TEST_DIR)
+
+    n = 0
     for f in os.listdir(_INPUT_DIR):
-        print("Processing:", f)
+        n += 1
+        print("Processing:", f, n)
 
         label_dir = os.path.join(_OUTPUT_DIR, f.split(".")[0][1:].zfill(3))
         if not os.path.exists(label_dir):
@@ -79,6 +93,17 @@ def run():
             img = cv2.resize(img, _SAMPLE_SIZE)
             img_filename = os.path.join(label_dir, "%d.jpg" % i)
             cv2.imwrite(img_filename, img)
+            del img
+            del img_filename
+
+        for i in range(int(_NUM_OF_SAMPLES * 0.01)):
+            img = add_noise(image)
+            img = generate_image(img)
+            img = cv2.resize(img, _SAMPLE_SIZE)
+            img_filename = os.path.join(_TEST_DIR, "%d_%d.jpg" % (n, i))
+            cv2.imwrite(img_filename, img)
+            del img
+            del img_filename
 
 
 if __name__ == "__main__":

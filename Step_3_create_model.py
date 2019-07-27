@@ -13,8 +13,8 @@ def create_model(input_shape, num_of_classes):
     )
 
     x = Conv2D(
-        filters=16,
-        kernel_size=(5, 5),
+        filters=64,
+        kernel_size=(3, 3),
         padding="same",
         strides=(1, 1),
         activation="relu"
@@ -23,23 +23,34 @@ def create_model(input_shape, num_of_classes):
     x = MaxPooling2D(pool_size=(2, 2))(x)
 
     x = Conv2D(
-        filters=32,
-        kernel_size=(5, 5),
+        filters=128,
+        kernel_size=(3, 3),
         padding="same",
         strides=(1, 1),
         activation="relu"
     )(x)
 
-    x = Dropout(rate=0.25)(x)
-
     x = Flatten()(x)
 
     x = Dense(
-        units=128,
+        units=2048,
         activation="relu"
     )(x)
 
-    x = Dropout(rate=0.5)(x)
+    x = Dense(
+        units=1024,
+        activation="relu"
+    )(x)
+
+    x = Dense(
+        units=512,
+        activation="relu"
+    )(x)
+
+    x = Dense(
+        units=256,
+        activation="relu"
+    )(x)
 
     predictions = Dense(
         units=num_of_classes,
@@ -58,5 +69,5 @@ def create_model(input_shape, num_of_classes):
 
 
 if __name__ == "__main__":
-    model = create_model((28, 28, 1), 10)
+    model = create_model((64, 64, 1), 120)
     model.summary()

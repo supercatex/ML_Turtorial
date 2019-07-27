@@ -12,7 +12,7 @@ from console_progressbar import ProgressBar
 import cv2
 
 
-def import_data(data_directory):
+def import_data(data_directory, size=(50, 50)):
     # Define X is features, y is label.
     X = []
     y = []
@@ -44,7 +44,7 @@ def import_data(data_directory):
             # Read image from file.
             filename = dir_images + os.sep + image_name
             image = Image.imread(filename)
-            image = cv2.resize(image, (100, 100))
+            image = cv2.resize(image, size)
 
             # Add into X, y.
             X.append(image)
