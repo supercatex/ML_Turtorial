@@ -12,7 +12,7 @@ from console_progressbar import ProgressBar
 import cv2
 
 
-def import_data(data_directory, size=(50, 50)):
+def import_data(data_directory, size=(50, 50), max_samples=0):
     # Define X is features, y is label.
     X = []
     y = []
@@ -32,13 +32,14 @@ def import_data(data_directory, size=(50, 50)):
 
         # Create a new progress bar.
         progress_bar = ProgressBar(
-            total=len(image_names),
+            total=min(len(image_names), max_samples),
             prefix="Label(%s):" % label,
             suffix="%d/%d" % (i+1, len(labels)),
             length=50
         )
 
         # Search all image in each folder.
+        n = 0
         for j, image_name in enumerate(image_names):
 
             # Read image from file.
@@ -52,6 +53,10 @@ def import_data(data_directory, size=(50, 50)):
 
             # Update progress bar.
             progress_bar.print_progress_bar(j + 1)
+
+            n += 1
+            if n >= max_samples:
+                break
 
     # Shuffle data.
     data = list(zip(X, y))

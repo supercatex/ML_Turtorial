@@ -13,7 +13,7 @@ def create_model(input_shape, num_of_classes):
     )
 
     x = Conv2D(
-        filters=64,
+        filters=32,
         kernel_size=(3, 3),
         padding="same",
         strides=(1, 1),
@@ -23,24 +23,23 @@ def create_model(input_shape, num_of_classes):
     x = MaxPooling2D(pool_size=(2, 2))(x)
 
     x = Conv2D(
-        filters=128,
+        filters=32,
         kernel_size=(3, 3),
         padding="same",
         strides=(1, 1),
         activation="relu"
     )(x)
 
-    x = Flatten()(x)
+    x = Dropout(0.1)(x)
 
-    x = Dense(
-        units=2048,
-        activation="relu"
-    )(x)
+    x = Flatten()(x)
 
     x = Dense(
         units=1024,
         activation="relu"
     )(x)
+
+    x = Dropout(0.1)(x)
 
     x = Dense(
         units=512,

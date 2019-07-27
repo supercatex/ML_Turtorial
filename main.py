@@ -19,11 +19,21 @@ import numpy as np
 # Dataset: https://www.kaggle.com/scolianni/mnistasjpg
 
 model_filename = "model"
-model, labels = load_model(model_filename)
-size = (50, 50)
+size = (100, 100)
+max_samples = 10
+epochs = 100
+batch_size = 128
+retraining = True
 
+if retraining:
+    if os.path.exists(model_filename + ".h5"):
+        os.remove(model_filename + ".h5")
+    if os.path.exists(model_filename + ".json"):
+        os.remove(model_filename + ".json")
+
+model, labels = load_model(model_filename)
 if model is None:
-    X, y, labels = import_data("./dataset/output/", size)
+    X, y, labels = import_data("./dataset/output/", size, max_samples)
     print(X.shape, y.shape, labels)
 
     X, y = normalize_data(X, y)
@@ -33,7 +43,7 @@ if model is None:
     model = create_model(X.shape[1:], len(labels))
     model.summary()
 
-    model, history = training(X, y, model)
+    model, history = training(X, y, model, epochs=epochs, batch_size=batch_size)
 
     save_model(model, labels, model_filename)
 
@@ -67,7 +77,6 @@ while True:
     x2 = int(data[5])
     y2 = int(data[6])
     sign = img[y1:y2, x1:x2]
-    cv2.imshow("sign", sign)
     sign = cv2.cvtColor(sign, cv2.COLOR_BGR2RGB)
 
     input = cv2.resize(sign, size)
@@ -75,12 +84,18 @@ while True:
 
     py = np.argmax(predict(input, model)[0]) + 1
     ty = int(data[7])
-    print(py, ty)
+    print("Predict:", py, "Answer:", ty)
 
     if py == ty:
         t += 1
     n += 1
 
-    cv2.waitKey(1)
+    if py == ty:
+        cv2.waitKey(1)
+    else:
+        cv2.imshow("sign", cv2.cvtColor(input[0], cv2.COLOR_RGB2BGR))
+        sign = cv2.imread("./dataset/images/s%d.png" % py, cv2.IMREAD_UNCHANGED)
+        cv2.imshow("predict", sign)
+        cv2.waitKey(0)
 
 print(t, n, t / n)

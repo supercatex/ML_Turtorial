@@ -4,13 +4,13 @@
 #
 
 
-def training(X, y, model):
+def training(X, y, model, epochs=10, batch_size=128):
     history = model.fit(
         x=X,
         y=y,
         validation_split=0.1,   # Separate data to training set and validation set.
-        epochs=10,              # Repeat times.
-        batch_size=128,         # Each epoch data input size.
+        epochs=epochs,              # Repeat times.
+        batch_size=batch_size,         # Each epoch data input size.
         verbose=1               # 0 = no log. 1 = log. 2 = log when epoch ending.
     )
 
